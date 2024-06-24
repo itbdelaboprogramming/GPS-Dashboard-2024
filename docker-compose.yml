@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  www:
+    build: .
+    ports:
+      - "4200:4200"
+    volumes:
+      - ".:/app"
+      - "/app/node_modules"

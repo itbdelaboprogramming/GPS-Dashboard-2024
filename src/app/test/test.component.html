@@ -1,0 +1,109 @@
+<head>
+  <script
+    src="https://kit.fontawesome.com/c9d9a9c246.js"
+    crossorigin="anonymous"
+  ></script>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.3.1/css/ol.css"
+    type="text/css"
+  />
+  <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.3.1/build/ol.js"></script>
+
+  <style>
+    #map {
+      width: 100%;
+      height: 100vh;
+    }
+  </style>
+</head>
+
+<body id="wholeapp">
+  <app-header></app-header>
+
+  <div (click)="toggleTable()" class="burger-table">
+    <i class="fas fa-plus"></i>
+  </div>
+
+  <div class="device-list">
+    <table>
+      <tr>
+        <th><p>No.</p></th>
+        <th><p>Vehicle Name</p></th>
+        <th class="coordinate"><p>Latitude</p></th>
+        <th class="coordinate"><p>Longitude</p></th>
+        <th><p>Status</p></th>
+        <th><p>Focus</p></th>
+        <th><p>View</p></th>
+        <th><p>Remove</p></th>
+      </tr>
+
+      <tr *ngFor="let vehc of vehicleList; let i = index">
+        <td id="{{ vehc }}">
+          <p>{{ i + 1 }}</p>
+        </td>
+        <td>
+          <p>{{ payarr[i].vehicleName }}</p>
+        </td>
+        <td class="coordinate">
+          <p>{{ payarr[i].latitude }}</p>
+        </td>
+        <td class="coordinate">
+          <p>{{ payarr[i].longitude }}</p>
+        </td>
+        <td>
+          <p>{{ payarr[i].status }}</p>
+        </td>
+        <td>
+          <i
+            style="cursor: pointer; color: #0567a6"
+            class="fas fa-search-plus"
+            (click)="newZoom(payarr[i].longitude, payarr[i].latitude)"
+          ></i>
+        </td>
+        <td>
+          <input
+            (click)="iconVisible()"
+            type="checkbox"
+            id="check{{ vehc }}"
+            checked
+          />
+        </td>
+        <td>
+          <i
+            style="cursor: pointer; color: #0567a6"
+            class="fas fa-times"
+            (click)="deletevehc(vehc)"
+          ></i>
+        </td>
+      </tr>
+
+      <!-- <tr>
+        <td><p>3</p></td>
+        <td><p>Porche</p></td>
+        <td class="coordinate"><p>000.0000000</p></td>
+        <td class="coordinate"><p>888.8888888</p></td>
+        <td><p>Aman bos</p></td>
+        <td><i style="cursor: pointer; color: #0567A6;" class="fas fa-search-plus" ></i></td>
+        <td><input (click)="iconVisible()" type="checkbox"  checked></td>
+        <td><i style="cursor: pointer; color: #0567A6;" class="fas fa-times" ></i></td>
+      </tr> -->
+    </table>
+  </div>
+
+  <div class="footer">
+    <img style="float: left" class="compass-icon" src="assets/compass.svg" />
+    <div class="right-footer">
+      <li style="width: fit-content">
+        <i
+          (click)="captureScreenshot()"
+          style="color: #0567a6; cursor: pointer; font-size: 5vh"
+          class="fas fa-camera"
+        ></i>
+      </li>
+      <li>&#169; 2023 ITBdeLabo</li>
+    </div>
+  </div>
+
+  <div class="map-layer" id="map"></div>
+</body>

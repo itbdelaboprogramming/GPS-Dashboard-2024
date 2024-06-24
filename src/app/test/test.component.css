@@ -1,0 +1,109 @@
+@import "https://use.fontawesome.com/releases/v5.15.4/css/all.css";
+@import "https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css";
+@import "https://fonts.googleapis.com/css?family=Titillium+Web:300";
+
+.device-list {
+  z-index: 2;
+  position: absolute;
+  margin: 30px;
+  left: -40vw;
+  max-height: 40vh;
+  overflow-y: auto;
+  border: 4px solid #0567a6;
+  transition: 0.8s;
+
+  &.is-closed {
+    transform: translateX(40vw);
+  }
+}
+
+.map-layer {
+  z-index: 1;
+}
+
+table {
+  font-family: Arial, Helvetica, sans-serif;
+  width: 37vw;
+  height: auto;
+  margin: 0 auto;
+}
+
+th {
+  background: linear-gradient(to right bottom, rgb(119, 175, 239), #0567a6);
+  color: #e8f5f4;
+}
+
+td {
+  text-align: center;
+  background: #e8f5f4;
+}
+
+th {
+  padding: 3px;
+  width: 30px;
+}
+
+tr:nth-child(even) {
+  background-color: #e8f5f4;
+}
+
+tr p,
+::placeholder {
+  font-size: 12px;
+}
+
+.coordinate {
+  width: 15vw;
+}
+
+.footer {
+  font-family: Arial, Helvetica, sans-serif;
+  position: absolute;
+  z-index: 3;
+  display: block;
+  top: 92vh;
+  width: 100%;
+}
+
+img {
+  width: 8vw;
+  height: auto;
+}
+
+.right-footer {
+  float: right;
+  margin-right: 20px;
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+li {
+  list-style-type: none;
+  margin-top: 5px;
+  background-color: #97e5f4;
+  padding: 5px;
+  border-radius: 5px;
+  border: 3px solid #0567a6;
+}
+
+.burger-table {
+  margin: 10px;
+  margin-left: 30px;
+  margin-top: 30px;
+  color: #0567a6;
+  position: absolute;
+  z-index: 4;
+  background-color: #97e5f4;
+  padding: 12px 15px;
+  border-radius: 50%;
+  border: 3px solid #0567a6;
+  transition: 0.8s;
+  transform: rotate(0deg);
+  cursor: pointer;
+
+  &.is-closed {
+    transform: translateX(39vw) rotate(45deg);
+  }
+}

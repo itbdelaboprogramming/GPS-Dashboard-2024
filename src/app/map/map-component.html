@@ -1,0 +1,28 @@
+<head>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.3.1/css/ol.css"
+    type="text/css"
+  />
+  <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.3.1/build/ol.js"></script>
+
+  <style>
+    #map {
+      width: 100%;
+      height: 600px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="ip-input">
+    <p style="margin-bottom: 2px">Enter server url address</p>
+    <p style="margin: 2px; font-size: smaller">(example: 192.168.18.32:3000)</p>
+    <input [(ngModel)]="webSoc.ipAdd" />
+    <button (click)="initgps()">ENTER</button>
+  </div>
+  <div class="additional">
+    Satelite : {{gpsData.sat}} HDOP : {{gpsData.hdop}}
+  </div>
+  <div id="map"></div>
+</body>
