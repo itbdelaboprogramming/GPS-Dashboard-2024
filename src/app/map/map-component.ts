@@ -1,140 +1,128 @@
-import 'ol/ol.css'
-import Tile from 'ol/layer/Tile'
-import Map from 'ol/Map'
-import Overlay from 'ol/Overlay'
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core'
-import { toLonLat } from 'ol/proj.js'
-import { fromLonLat } from 'ol/proj.js'
-import View from 'ol/View'
-import OSM from 'ol/source/OSM.js'
-
-import Feature from 'ol/Feature'
-import Point from 'ol/geom/Point'
-import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer'
-import VectorSource from 'ol/source/Vector'
-import { Icon, Style } from 'ol/style'
-
-import { Title } from '@angular/platform-browser'
-import { WebsocketService } from '../services/websocket.service'
-import { GpsdataService } from '../services/gpsdata.service'
+import { Component, OnInit } from '@angular/core';
+import Map from 'ol/Map';
+import View from 'ol/View';
+import TileLayer from 'ol/layer/Tile';
+import VectorLayer from 'ol/layer/Vector';
+import OSM from 'ol/source/OSM';
+import Feature, { FeatureLike } from 'ol/Feature';
+import Point from 'ol/geom/Point';
+import VectorSource from 'ol/source/Vector';
+import { Icon, Style } from 'ol/style';
+import { fromLonLat } from 'ol/proj';
+import { WebsocketService } from '../services/websocket.service';
+import { GpsdataService } from '../services/gpsdata.service';
+import { Geometry } from 'ol/geom';
 
 @Component({
   selector: 'app-map',
   templateUrl: './map-component.html',
-  styleUrls: ['./map-component.css'],
+  styleUrls: ['./map-component.css']
 })
 export class MapComponent implements OnInit {
-  public map: Map | undefined
-  public satelitecnt: any
-  public hdop: any
-  public longi: any
-  public lati: any
-  public temploc = [0, 0]
-  public ipAdd: any
+  public map: Map | undefined;
+  public satelitecnt: any;
+  public hdop: any;
+  public longi: any;
+  public lati: any;
+  public temploc = [0, 0];
+  public ipAdd: any;
 
   constructor(
     public webSoc: WebsocketService,
-    public gpsData: GpsdataService,
+    public gpsData: GpsdataService
   ) {}
 
-  async ngOnInit() {}
+  async ngOnInit() {
+    this.initgps();
+  }
 
   initgps() {
     // Start Socket IO connection and receive data
-    this.gpsData.Init()
+    this.gpsData.Init();
 
-    this.addcount()
+    this.addcount();
     // Start map initiation function and pass gps data
     setTimeout(() => {
-      this.longi = this.gpsData.long
-      this.lati = this.gpsData.lat
-      console.log('longitude again : ' + this.longi)
-      console.log('latitude again : ' + this.lati)
-      // this.temploc=[this.gpsData.longi,this.gpsData.lati]
-      this.initmap(this.gpsData, this.longi, this.lati)
-
-      // this.satelitecnt=this.gpsData.sateliteCount()
-    }, 500)
+      this.longi = this.gpsData.long;
+      this.lati = this.gpsData.lat;
+      console.log("longitude again: " + this.longi);
+      console.log("latitude again: " + this.lati);
+      this.initmap(this.gpsData, this.longi, this.lati);
+    }, 500);
   }
 
   addcount() {
-    this.satelitecnt = this.gpsData.sateliteCount()
-    this.hdop = this.gpsData.gethdop()
-    console.log('satelite :' + this.satelitecnt)
-    console.log('hdop :' + this.hdop)
+    this.satelitecnt = this.gpsData.sateliteCount();
+    this.hdop = this.gpsData.gethdop();
+    console.log("satelite: " + this.satelitecnt);
+    console.log("hdop: " + this.hdop);
   }
 
-  // Function to initiate gps data visualization in map
+  // Function to initiate GPS data visualization in map
   initmap(gpsdataservice: any, lon: any, lat: any) {
-    console.log('calling initmap')
+    console.log("calling initmap");
 
-    // Create a new feature for gps icon
-    var gpsFeature = new Feature({
-      // geometry : new Point(fromLonLat([-6.5360378062373,63.65079914412625]))
-      geometry: new Point(fromLonLat([gpsdataservice.coordinate()])),
-    })
+    // Create a new feature for GPS icon
+    const gpsFeature = new Feature<Point>({
+      geometry: new Point(fromLonLat(gpsdataservice.coordinate()))
+    });
 
-    // Set the style for gps icon
+    // Set the style for GPS icon
     gpsFeature.setStyle(
       new Style({
         image: new Icon({
           src: 'assets/arrow.svg',
-          imgSize: [600, 600],
+          size: [600, 600],
           scale: 0.1,
-          color: '#00FF2B',
-        }),
-      }),
-    )
+          color: '#00FF2B'
+        })
+      })
+    );
 
-    // Make a vector source for new gps layer from gps feature
-    var gpsSource = new VectorSource({
-      features: [gpsFeature],
-    })
+    // Make a vector source for new GPS layer from GPS feature
+    const gpsSource = new VectorSource<FeatureLike>({
+      features: [gpsFeature]
+    });
 
-    // Make a new vector layer from gps source
-    var gpsLayer = new VectorLayer({
-      source: gpsSource,
-    })
+    // Make a new vector layer from GPS source
+    const gpsLayer = new VectorLayer<FeatureLike>({
+      source: gpsSource
+    });
 
     // Make a map and setup the map source, layer, and view
     this.map = new Map({
       target: 'map',
       layers: [
-        new Tile({
-          source: new OSM(),
+        new TileLayer({
+          source: new OSM()
         }),
-        gpsLayer,
-        //MapLayer
+        gpsLayer
       ],
       view: new View({
         center: fromLonLat([lon, lat]),
         zoom: 20,
-        enableRotation: false,
-      }),
-    })
-
-    // Make an interval function that will update position and heading of gps icon every 0.1 second
-    setInterval(function refreshIcon() {
-      //console.log("getmission : ",flightDataService.getMission())
-      // gpsdataservice.gpess()
-
-      gpsSource.clear()
-      var temp_gpsFeature = new Feature({
-        // geometry : new Point(fromLonLat(MavlinkService.getCoordinate()))
-        geometry: new Point(fromLonLat(gpsdataservice.coordinate())),
+        enableRotation: false
       })
+    });
+
+    // Make an interval function that will update position and heading of GPS icon every 0.1 second
+    setInterval(() => {
+      gpsSource.clear();
+      const temp_gpsFeature = new Feature<Point>({
+        geometry: new Point(fromLonLat(gpsdataservice.coordinate()))
+      });
 
       temp_gpsFeature.setStyle(
         new Style({
           image: new Icon({
             src: 'assets/arrow.svg',
-            imgSize: [600, 600],
+            size: [600, 600],
             scale: 0.1,
-            rotation: (-gpsdataservice.heading() * Math.PI) / 180 - 45.5,
-          }),
-        }),
-      )
-      gpsSource.addFeature(temp_gpsFeature)
-    }, 100)
+            rotation: -gpsdataservice.heading() * Math.PI / 180 - 45.5
+          })
+        })
+      );
+      gpsSource.addFeature(temp_gpsFeature);
+    }, 100);
   }
 }
