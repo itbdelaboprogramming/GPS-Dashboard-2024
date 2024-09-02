@@ -21,26 +21,27 @@
 <body id="wholeapp">
   <app-header></app-header>
 
-  <div (click)="toggleTable()" class="burger-table">
-    <i class="fas fa-plus"></i>
+  <div (click)="toggleTable()" class="burger-table" id="refresh-robot">
+    <i class="fa fa-rotate-right"></i>
+  </div>
+  <div (click)="toggleTable()" class="burger-table" id="toggle-table">
+    <i class="fa fa-bars"></i>
   </div>
 
   <div class="device-list">
     <table>
       <tr>
         <th><p>No.</p></th>
-        <th><p>Vehicle Name</p></th>
+        <th><p>Robot Name</p></th>
         <th class="coordinate"><p>Latitude</p></th>
         <th class="coordinate"><p>Longitude</p></th>
         <th><p>Status</p></th>
-        <th><p>Focus</p></th>
         <th><p>View</p></th>
-        <th><p>Remove</p></th>
       </tr>
 
       <tr *ngFor="let vehc of vehicleList; let i = index">
         <td id="{{ vehc }}">
-          <p>{{ i + 1 }}</p>
+          <p>{{ i + 1 }}</p>  
         </td>
         <td>
           <p>{{ payarr[i].vehicleName }}</p>
@@ -55,26 +56,12 @@
           <p>{{ payarr[i].status }}</p>
         </td>
         <td>
-          <i
-            style="cursor: pointer; color: #0567a6"
-            class="fas fa-search-plus"
-            (click)="newZoom(payarr[i].longitude, payarr[i].latitude)"
-          ></i>
-        </td>
-        <td>
           <input
             (click)="iconVisible()"
             type="checkbox"
             id="check{{ vehc }}"
             checked
           />
-        </td>
-        <td>
-          <i
-            style="cursor: pointer; color: #0567a6"
-            class="fas fa-times"
-            (click)="deletevehc(vehc)"
-          ></i>
         </td>
       </tr>
 

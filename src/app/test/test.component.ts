@@ -62,9 +62,9 @@ export class TestComponent implements OnInit {
       }
     });
 
-    this.webSoc.listen("gps-then").subscribe((data: any) => {
-      this.updateGpsData(data);
-    });
+      this.webSoc.listen("gps-then").subscribe((data: any) => {
+        this.updateGpsData(data);
+      });
 
     setTimeout(() => {
       for (let i = 0; i < this.newLength; i++) {

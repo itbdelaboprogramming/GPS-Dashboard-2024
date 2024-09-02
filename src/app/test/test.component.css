@@ -5,7 +5,7 @@
 .device-list {
   z-index: 2;
   position: absolute;
-  margin: 30px;
+  margin: 30px 30px 30px 100px;
   left: -40vw;
   max-height: 40vh;
   overflow-y: auto;
@@ -29,8 +29,9 @@ table {
 }
 
 th {
-  background: linear-gradient(to right bottom, rgb(119, 175, 239), #0567a6);
-  color: #e8f5f4;
+  background: #97E5F4;
+  color: black;
+  opacity: 0.8;
 }
 
 td {
@@ -88,7 +89,7 @@ li {
   border: 3px solid #0567a6;
 }
 
-.burger-table {
+#toggle-table {
   margin: 10px;
   margin-left: 30px;
   margin-top: 30px;
@@ -97,13 +98,23 @@ li {
   z-index: 4;
   background-color: #97e5f4;
   padding: 12px 15px;
-  border-radius: 50%;
+  border-radius: 10%;
   border: 3px solid #0567a6;
   transition: 0.8s;
-  transform: rotate(0deg);
   cursor: pointer;
+}
 
-  &.is-closed {
-    transform: translateX(39vw) rotate(45deg);
-  }
+#refresh-robot {
+  margin: 10px;
+  margin-left: 30px;
+  margin-top: 100px;
+  color: #0567a6;
+  position: absolute;
+  z-index: 4;
+  background-color: #97e5f4;
+  padding: 12px 15px;
+  border-radius: 10%;
+  border: 3px solid #0567a6;
+  transition: 0.8s;
+  cursor: pointer;
 }
