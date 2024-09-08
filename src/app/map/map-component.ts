@@ -117,8 +117,7 @@ export class MapComponent implements OnInit {
           image: new Icon({
             src: 'assets/arrow.svg',
             size: [600, 600],
-            scale: 0.1,
-            rotation: -gpsdataservice.heading() * Math.PI / 180 - 45.5
+            scale: 100,
           })
         })
       );

@@ -57,7 +57,7 @@ export class TestComponent implements OnInit {
       }
       if (this.initLength === 0) {
         this.layerdev(this.newLength);
-        this.tableColor(this.newLength);
+        // this.tableColor(this.newLength);
         this.initLength = this.newLength;
       }
     });
@@ -66,14 +66,14 @@ export class TestComponent implements OnInit {
         this.updateGpsData(data);
       });
 
-    setTimeout(() => {
-      for (let i = 0; i < this.newLength; i++) {
-        const element = document.getElementById(this.vehicleList[i]);
-        if (element) {
-          element.style.backgroundColor = this.iconColor(this.vehicleList[i]);
-        }
-      }
-    }, 2000);
+    // setTimeout(() => {
+    //   for (let i = 0; i < this.newLength; i++) {
+    //     const element = document.getElementById(this.vehicleList[i]);
+    //     if (element) {
+    //       element.style.backgroundColor = this.iconColor(this.vehicleList[i]);
+    //     }
+    //   }
+    // }, 2000);
   }
 
   updateGpsData(data: any) {
@@ -93,8 +93,8 @@ export class TestComponent implements OnInit {
         image: new Icon({
           src: 'assets/arrow.svg',
           size: [600, 600],
-          scale: 0.1,
-          color: this.iconColor(this.paylod.id)
+          scale: 0.1
+          // color: this.iconColor(this.paylod.id)
         })
       })
     );
@@ -176,14 +176,14 @@ export class TestComponent implements OnInit {
     }
   }
 
-  tableColor(list: any) {
-    for (let i = 0; i < list.length; i++) {
-      const element = document.getElementById(list[i]);
-      if (element) {
-        element.style.backgroundColor = this.iconColor(i + 1);
-      }
-    }
-  }
+  // tableColor(list: any) {
+  //   for (let i = 0; i < list.length; i++) {
+  //     const element = document.getElementById(list[i]);
+  //     if (element) {
+  //       element.style.backgroundColor = this.iconColor(i + 1);
+  //     }
+  //   }
+  // }
 
   roomi(room: any) {
     this.webSoc.emit("room", room);
@@ -213,11 +213,29 @@ export class TestComponent implements OnInit {
     }
   }
 
+  newZoomSetColor(lon: any, lat: any, id: any) {
+    this.newZoom(lon, lat);
+    this.setColor(id);
+  }
+
+  setColor(id: any) {
+    for (let i = 0; i < this.newLength; i++) {
+      const element = document.getElementById(i.toString());
+      if (element) {
+        if (i == id) {
+          element.style.background = "#00FF2B";
+        } else {
+          element.style.background = "#e64969";
+        }
+      }
+    }
+  }
+
   newZoom(lon: any, lat: any) {
     if (this.map) {
       this.map.setView(new View({
         center: fromLonLat([lon, lat]),
-        zoom: 20,
+        zoom: this.map.getView().getZoom(),
         enableRotation: false
       }));
     }

@@ -6,14 +6,14 @@
   z-index: 2;
   position: absolute;
   margin: 30px 30px 30px 100px;
-  left: -40vw;
+  left: -100vw;
   max-height: 40vh;
   overflow-y: auto;
   border: 4px solid #0567a6;
-  transition: 0.8s;
+  transition: 0.3s;
 
   &.is-closed {
-    transform: translateX(40vw);
+    transform: translateX(100vw);
   }
 }
 
@@ -36,7 +36,7 @@ th {
 
 td {
   text-align: center;
-  background: #e8f5f4;
+  /* background: #e8f5f4; */
 }
 
 th {
@@ -44,9 +44,9 @@ th {
   width: 30px;
 }
 
-tr:nth-child(even) {
-  background-color: #e8f5f4;
-}
+  /* tr:nth-child(even) {
+    background-color: #e8f5f4;
+  } */
 
 tr p,
 ::placeholder {
@@ -54,8 +54,21 @@ tr p,
 }
 
 .coordinate {
-  width: 15vw;
+  width: 5vw;
 }
+
+.status {
+  width: 10vw;
+}
+
+.view {
+  width: 2vw;
+}
+
+input[type="checkbox"] {
+  zoom: 1.5;
+}
+
 
 .footer {
   font-family: Arial, Helvetica, sans-serif;
@@ -118,3 +131,4 @@ li {
   transition: 0.8s;
   cursor: pointer;
 }
+
