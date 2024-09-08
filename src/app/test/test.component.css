@@ -132,3 +132,7 @@ li {
   cursor: pointer;
 }
 
+.vehicle-item {
+  border: 1px solid #0567a6;
+  background: #97E5F4;
+}

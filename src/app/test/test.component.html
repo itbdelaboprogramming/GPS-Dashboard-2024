@@ -39,7 +39,7 @@
         <th class="view"><p>View</p></th>
       </tr>
 
-      <tr *ngFor="let vehc of vehicleList; let i = index" id="{{ vehc }}" (click)="newZoomSetColor(payarr[i].longitude,payarr[i].latitude,vehc)">
+      <tr *ngFor="let vehc of vehicleList; let i = index" class="vehicle-item" id="{{ vehc }}" (click)="newZoomSetColor(payarr[i].longitude,payarr[i].latitude,vehc)">
         <td>
           <p>{{ i + 1 }}</p>  
         </td>

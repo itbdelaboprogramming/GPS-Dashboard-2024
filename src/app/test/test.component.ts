@@ -219,13 +219,14 @@ export class TestComponent implements OnInit {
   }
 
   setColor(id: any) {
-    for (let i = 0; i < this.newLength; i++) {
+    for (let i = 0; i <= this.vehicleList.length; i++) {
       const element = document.getElementById(i.toString());
       if (element) {
         if (i == id) {
-          element.style.background = "#00FF2B";
+          element.style.background = "#e66e86";
+          element.style.opacity = "0.8";
         } else {
-          element.style.background = "#e64969";
+          element.style.background = "#97E5F4";          
         }
       }
     }
