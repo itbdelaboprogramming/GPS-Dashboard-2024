@@ -12,6 +12,7 @@ import { fromLonLat } from 'ol/proj';
 import { WebsocketService } from '../services/websocket.service';
 import { GpsdataService } from '../services/gpsdata.service';
 import { Geometry } from 'ol/geom';
+import { getRandomColorHex } from '../utils/get-random-color';
 
 @Component({
   selector: 'app-map',
@@ -32,16 +33,14 @@ export class MapComponent implements OnInit {
     public gpsData: GpsdataService
   ) {}
 
-  async ngOnInit() {
+  ngOnInit() {
     this.initgps();
   }
 
   initgps() {
-    // Start Socket IO connection and receive data
     this.gpsData.Init();
 
     this.addcount();
-    // Start map initiation function and pass gps data
     setTimeout(() => {
       this.longi = this.gpsData.long;
       this.lati = this.gpsData.lat;
@@ -74,7 +73,7 @@ export class MapComponent implements OnInit {
           src: 'assets/arrow.svg',
           size: [600, 600],
           scale: 0.1,
-          color: '#00FF2B'
+          color: getRandomColorHex()
         })
       })
     );

@@ -13,7 +13,7 @@
   <style>
     #map {
       width: 100%;
-      height: 100vh;
+      height: 100%;
     }
   </style>
 </head>
@@ -25,7 +25,7 @@
     <i class="fa fa-rotate-right"></i>
   </div>
   <div (click)="toggleTable()" class="burger-table" id="toggle-table">
-    <i class="fa fa-bars"></i>
+    <i class="fa-class-button fa fa-bars"></i>
   </div>
 
   <div class="device-list">
@@ -69,15 +69,24 @@
   </div>
 
   <div class="footer">
-    <img style="float: left" class="compass-icon" src="assets/compass.svg" />
+    <div class="left-footer">
+      <img class="compass-icon" src="assets/compass.svg" />
+    </div>
     <div class="right-footer">
-      <li style="width: fit-content">
+      <div class="footer-container">
+        <i
+        (click)="zoomIn()"
+        class="footer-button fa-class-button fa fa-search-plus"
+        ></i>
+        <i
+        (click)="zoomOut()"
+        class="footer-button fa-class-button fa fa-search-minus"
+        ></i>
         <i
           (click)="captureScreenshot()"
-          style="color: #0567a6; cursor: pointer; font-size: 5vh"
-          class="fas fa-camera"
+          class="footer-button fa-class-button fas fa-camera"
         ></i>
-      </li>
+      </div>
       <li>&#169; 2024 ITBdeLabo</li>
     </div>
   </div>

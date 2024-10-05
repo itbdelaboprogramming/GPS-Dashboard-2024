@@ -55,4 +55,9 @@ export class HeaderComponent implements OnInit {
 
     // return formattedHours + ":" + formattedMinutes
   }
+
+  exitApp() {
+    // var customWindow = window.open('', '_blank', '');
+    // customWindow!!.close();
+  }
 }

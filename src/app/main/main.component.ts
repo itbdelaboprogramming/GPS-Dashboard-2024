@@ -18,9 +18,9 @@ import { fromLonLat } from 'ol/proj';
 import { Geometry } from 'ol/geom';
 
 @Component({
-  selector: 'app-test',
-  templateUrl: './test.component.html',
-  styleUrls: ['./test.component.css']
+  selector: 'app-main',
+  templateUrl: './main.component.html',
+  styleUrls: ['./main.component.css']
 })
 export class TestComponent implements OnInit {
   public location1: any;
@@ -47,6 +47,7 @@ export class TestComponent implements OnInit {
   ngOnInit() {
     this.webSoc.conn();
     this.gpsDat.Init();
+    this.initMap();
 
     this.webSoc.listen("vehicle-list").subscribe((data: any) => {
       this.vehicleList = data;
@@ -55,25 +56,11 @@ export class TestComponent implements OnInit {
       if (this.newLength !== this.initLength && this.initLength !== 0) {
         this.refreshPage();
       }
-      if (this.initLength === 0) {
-        this.layerdev(this.newLength);
-        // this.tableColor(this.newLength);
-        this.initLength = this.newLength;
-      }
     });
 
-      this.webSoc.listen("gps-then").subscribe((data: any) => {
-        this.updateGpsData(data);
-      });
-
-    // setTimeout(() => {
-    //   for (let i = 0; i < this.newLength; i++) {
-    //     const element = document.getElementById(this.vehicleList[i]);
-    //     if (element) {
-    //       element.style.backgroundColor = this.iconColor(this.vehicleList[i]);
-    //     }
-    //   }
-    // }, 2000);
+    this.webSoc.listen("gps-then").subscribe((data: any) => {
+      this.updateGpsData(data);
+    });
   }
 
   updateGpsData(data: any) {
@@ -232,6 +219,38 @@ export class TestComponent implements OnInit {
     }
   }
 
+  initMap() {
+    this.map = new Map({
+    target: 'map',
+    controls: [],
+    layers: [
+      new TileLayer({
+        source: new OSM()
+      })
+    ],
+    view: new View({
+      center: fromLonLat([106.920671, -6.167175]),
+      zoom: 1,
+      enableRotation: false
+    })
+  });
+
+  }
+
+  zoomIn() {
+    if (this.map) {
+      const zoom = this.map.getView().getZoom()
+      this.map?.getView().setZoom(zoom!! + 1);
+    }
+  }
+
+  zoomOut() {
+    if (this.map) {
+      const zoom = this.map.getView().getZoom()
+      this.map?.getView().setZoom(zoom!! - 1);
+    }
+  }
+
   newZoom(lon: any, lat: any) {
     if (this.map) {
       this.map.setView(new View({
@@ -242,56 +261,40 @@ export class TestComponent implements OnInit {
     }
   }
 
-  layerdev(length: any) {
-    const aslilength = length;
-    this.robotarrn = [];
+  // layerdev(length: any) {
+  //   const aslilength = length;
+  //   this.robotarrn = [];
 
-    for (let i = 0; i < aslilength; i++) {
-      const gpsFeature = new Feature({
-        geometry: new Point(fromLonLat([106.920671 - 0.0001 * Math.random(), -6.167175 - 0.0001 * Math.random()]))
-      });
+  //   for (let i = 0; i < aslilength; i++) {
+  //     const gpsFeature = new Feature({
+  //       geometry: new Point(fromLonLat([106.920671 - 0.0001 * Math.random(), -6.167175 - 0.0001 * Math.random()]))
+  //     });
 
-      gpsFeature.setStyle(new Style({
-        image: new Icon({
-          src: 'assets/arrow.svg',
-          size: [600, 600],
-          scale: 0.1,
-        })
-      }));
+  //     gpsFeature.setStyle(new Style({
+  //       image: new Icon({
+  //         src: 'assets/arrow.svg',
+  //         size: [600, 600],
+  //         scale: 0.1,
+  //       })
+  //     }));
 
-      const gpsLayer = new VectorLayer<FeatureLike>({
-        source: new VectorSource<FeatureLike>({
-          features: [gpsFeature]
-        })
-      });
+  //     const gpsLayer = new VectorLayer<FeatureLike>({
+  //       source: new VectorSource<FeatureLike>({
+  //         features: [gpsFeature]
+  //       })
+  //     });
 
-      this.robotarrn.push(gpsLayer);
-    }
+  //     this.robotarrn.push(gpsLayer);
+  //   }
+  //   this.map.addControl(new Zoom({
+  //     className: 'zoom-control',
+  //     zoomInLabel: '+',
+  //     zoomOutLabel: '-'
+  //   }));
 
-    this.map = new Map({
-      target: 'map',
-      controls: [],
-      layers: [
-        new TileLayer({
-          source: new OSM()
-        })
-      ],
-      view: new View({
-        center: fromLonLat([106.920671, -6.167175]),
-        zoom: 1,
-        enableRotation: false
-      })
-    });
-
-    this.map.addControl(new Zoom({
-      className: 'zoom-control',
-      zoomInLabel: '+',
-      zoomOutLabel: '-'
-    }));
-
-    for (let i = 0; i < aslilength; i++) {
-      this.map.addLayer(this.robotarrn[i]);
-    }
-  }
+  //   for (let i = 0; i < aslilength; i++) {
+  //     this.map.addLayer(this.robotarrn[i]);
+  //   }
+  // }
 }
 

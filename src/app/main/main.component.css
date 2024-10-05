@@ -3,7 +3,7 @@
 @import "https://fonts.googleapis.com/css?family=Titillium+Web:300";
 
 .device-list {
-  z-index: 2;
+  z-index: 2; 
   position: absolute;
   margin: 30px 30px 30px 100px;
   left: -100vw;
@@ -74,9 +74,10 @@ input[type="checkbox"] {
   font-family: Arial, Helvetica, sans-serif;
   position: absolute;
   z-index: 3;
-  display: block;
-  top: 92vh;
+  bottom: 0;
   width: 100%;
+  display: flex;
+  justify-content: space-between;
 }
 
 img {
@@ -91,6 +92,14 @@ img {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  margin-bottom: 10px;
+}
+
+.left-footer {
+  margin-left: 20px;
+  margin-bottom: 10px;
+  display: grid;
+  place-items: end start; /* Aligns item to bottom left */
 }
 
 li {
@@ -102,20 +111,6 @@ li {
   border: 3px solid #0567a6;
 }
 
-#toggle-table {
-  margin: 10px;
-  margin-left: 30px;
-  margin-top: 30px;
-  color: #0567a6;
-  position: absolute;
-  z-index: 4;
-  background-color: #97e5f4;
-  padding: 12px 15px;
-  border-radius: 10%;
-  border: 3px solid #0567a6;
-  transition: 0.8s;
-  cursor: pointer;
-}
 
 #refresh-robot {
   margin: 10px;
@@ -125,14 +120,64 @@ li {
   position: absolute;
   z-index: 4;
   background-color: #97e5f4;
-  padding: 12px 15px;
   border-radius: 10%;
   border: 3px solid #0567a6;
   transition: 0.8s;
   cursor: pointer;
+  display: none; /* TODO: Confirm if this is no longer used */
 }
 
 .vehicle-item {
   border: 1px solid #0567a6;
   background: #97E5F4;
+}
+
+#wholeapp { 
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.footer-container {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+
+#toggle-table {
+  margin: 20px;
+  color: #0567a6;
+  position: absolute;
+  z-index: 4;
+  background-color: #97e5f4;
+  border-radius: 10%;
+  border: 3px solid #0567a6;
+  transition: 0.8s; 
+  padding: 5px 8.55px 5px 8.55px;
+  width: fit-content;
+  height: fit-content;
+  cursor: pointer;
+}
+
+.footer-button {
+  margin-top: 5px;
+  background-color: #97e5f4;
+  padding: 5px;
+  border-radius: 10%;
+  border: 3px solid #0567a6;
+  margin: 5px;
+  width: fit-content;
+  height: fit-content;
+}
+
+.fa-class-button {
+  color: #0567a6; cursor: pointer; font-size: 50px;
+}
+
+
+.compass-icon {
+  width: 70px;
+  height: 70px;
 }
