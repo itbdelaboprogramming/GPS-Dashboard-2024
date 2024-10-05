@@ -17,6 +17,10 @@
   }
 }
 
+.icon-focus {
+  font-size: 10px;
+}
+
 .hidden {
   display: none;
 }
@@ -27,6 +31,7 @@ th {
 
 td {
   border: 3px solid #0567a6;
+  background-color: #D9FEFA;
 }
 
 .map-layer {
@@ -70,7 +75,7 @@ tr p,
 }
 
 .status {
-  width: 10vw;
+  width: 5vw;
 }
 
 .view {
@@ -78,7 +83,7 @@ tr p,
 }
 
 input[type="checkbox"] {
-  zoom: 1.5;
+  zoom: 2;
 }
 
 
@@ -192,6 +197,11 @@ li {
 .compass-icon {
   width: 70px;
   height: 70px;
+}
+
+.focus-icon {
+  width: 20px;
+  height: 20px;
 }
 
 .toast-notification {

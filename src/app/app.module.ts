@@ -4,8 +4,7 @@ import { FormsModule } from '@angular/forms'
 
 import { AppRoutingModule } from './app-routing.module'
 import { AppComponent } from './app.component'
-import { MapComponent } from './map/map-component'
-import { TestComponent } from './main/main.component'
+import { MainComponent } from './main/main.component'
 import { HeaderComponent } from './header/header.component'
 import { IpInsertComponent } from './ip-insert/ip-insert.component'
 import { HashLocationStrategy, LocationStrategy } from '@angular/common'
@@ -13,8 +12,7 @@ import { HashLocationStrategy, LocationStrategy } from '@angular/common'
 @NgModule({
   declarations: [
     AppComponent,
-    MapComponent,
-    TestComponent,
+    MainComponent,
     HeaderComponent,
     IpInsertComponent,
   ],

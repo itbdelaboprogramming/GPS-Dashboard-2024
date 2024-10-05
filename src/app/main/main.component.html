@@ -49,26 +49,31 @@
       </tr>
 
       <tr *ngFor="let vehc of vehicleList; let i = index" class="vehicle-item" id="vehicle-item-{{ i }}">
-        <td>
+        <td [ngStyle]="{ 'background-color': getRandomColorHex(vehc.id) }">
           <p>{{ i + 1 }}</p>
         </td>
-        <td>
+        <td [ngStyle]="{ 'background-color': vehc.data.state == 'Working' ? 'D9FEFA' : '#D498A9' }" >
           <p>{{ vehicleList[i].data.vehicleName }}</p>
         </td>
-        <td class="coordinate">
+        <td [ngStyle]="{ 'background-color': vehc.data.state == 'Working' ? 'D9FEFA' : '#D498A9' }" class="coordinate">
           <p>{{ vehicleList[i].data.latitude }}</p>
         </td>
-        <td class="coordinate">
+        <td [ngStyle]="{ 'background-color': vehc.data.state == 'Working' ? 'D9FEFA' : '#D498A9' }" class="coordinate">
           <p>{{ vehicleList[i].data.longitude }}</p>
         </td>
-        <td>
+        <td [ngStyle]="{ 'background-color': vehc.data.state == 'Working' ? 'D9FEFA' : '#D498A9' }">
           <p>{{ vehicleList[i].data.state }}</p>
         </td>
         <td>
-          <input class="focus" (click)="iconVisible()" id="check-{{ i }}" checked />
+          <img (click)="moveFocus(vehc.data.longitude, vehc.data.latitude)" class="focus-icon" src="assets/focus.svg" />
         </td>
         <td>
-          <input class="view-checkbox" (click)="iconVisible()" type="checkbox" id="check-{{ i }}" checked />
+          <input 
+          class="view-checkbox" 
+          (click)="viewCheckbox('check-' + i, vehc.id)" 
+          type="checkbox" 
+          [id]="'check-' + i" 
+          checked />
         </td>
       </tr>
     </table>

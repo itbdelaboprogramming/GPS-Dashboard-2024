@@ -31,6 +31,9 @@ const io = require("socket.io")(server, {
 
 const MOVING_TIMEOUT = 5000
 const CONNECTION_TIMEOUT = 10000
+const DISCONNECTED = "Disconnected"
+const IDLE = "Idle"
+const WORKING = "Working"
 
 var vehicleList = []
 var movingTimeouts = []
@@ -49,10 +52,11 @@ io.on("connection", (socket) => {
         vehicleList[i].data.vehicleName = payload.data.vehicleName
         if (!(vehicleList[i].data.longitude == payload.data.longitude && vehicleList[i].data.latitude == payload.data.latitude)) {
           resetMovingTimeout(payload.id)
-          vehicleList[i].data.state = "Working"
+          vehicleList[i].data.state = WORKING
         }
-        if (vehicleList[i].data.state == "Disconnected") {
-          vehicleList[i].data.state = "Working"
+        if (vehicleList[i].data.state == DISCONNECTED) {
+          resetMovingTimeout(payload.id)
+          vehicleList[i].data.state = WORKING
         }
         resetConnectionTimeout(payload.id)
 
@@ -62,7 +66,7 @@ io.on("connection", (socket) => {
     }
     if (!vehicleFound) {
       /* Assume every robot working when connected in the first time */
-      payload.data.state = "Working"
+      payload.data.state = WORKING
       vehicleList.push(payload)
       registerConnectionTimeout(payload.id)
       registerMovingTimeout(payload.id)
@@ -78,6 +82,7 @@ setInterval(()=>{
 function setState(id, state) {
   for (let i = 0; i < vehicleList.length; i++) {
     if (vehicleList[i].id == id) {
+      if (vehicleList[i].data.state == DISCONNECTED && state == IDLE) return; /* Safe guard for moving and connection timeout race condition */
       vehicleList[i].data.state = state
       break
     }
@@ -87,14 +92,14 @@ function setState(id, state) {
 function registerMovingTimeout(id) {
   timeout = setTimeout(() => {
     console.log("Timeout for ", id)
-    setState(id, "Idle")
+    setState(id, IDLE)
   }, MOVING_TIMEOUT)
   movingTimeouts.push({ id: id, timeout: timeout })
 }
 
 function registerConnectionTimeout(id) {
   timeout = setTimeout(() => {
-    setState(id, "Disconnected")
+    setState(id, DISCONNECTED)
   }, CONNECTION_TIMEOUT)
   connectionTimeout.push({ id: id, timeout: timeout })
 }
@@ -105,7 +110,7 @@ function resetMovingTimeout(id) {
     if (movingTimeouts[i].id == id) {
       clearTimeout(movingTimeouts[i].timeout)
       movingTimeouts[i].timeout = setTimeout(() => {
-        setState(id, "Idle")
+        setState(id, IDLE)
       }, MOVING_TIMEOUT)
       break
     }
@@ -117,7 +122,7 @@ function resetConnectionTimeout(id) {
     if (connectionTimeout[i].id == id) {
       clearTimeout(connectionTimeout[i].timeout)
       connectionTimeout[i].timeout = setTimeout(() => {
-        setState(id, "Disconnected")
+        setState(id, DISCONNECTED)
       }, CONNECTION_TIMEOUT)
       break
     }

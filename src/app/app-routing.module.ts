@@ -1,19 +1,14 @@
 import { NgModule } from '@angular/core'
 import { RouterModule, Routes } from '@angular/router'
-import { MapComponent } from './map/map-component'
-import { TestComponent } from './main/main.component'
+import { MainComponent } from './main/main.component'
 import { IpInsertComponent } from './ip-insert/ip-insert.component'
 import { LocationStrategy } from '@angular/common'
 import { HashLocationStrategy } from '@angular/common'
 
 const routes: Routes = [
   {
-    path: 'dashboard',
-    component: MapComponent,
-  },
-  {
     path: 'main',
-    component: TestComponent,
+    component: MainComponent,
   },
   {
     path: 'config',

@@ -12,18 +12,16 @@ import Feature, { FeatureLike } from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import VectorSource from 'ol/source/Vector';
 import { Icon, Style } from 'ol/style';
-import Zoom from 'ol/control/Zoom';
 import html2canvas from 'html2canvas';
 import { fromLonLat } from 'ol/proj';
-import { Geometry } from 'ol/geom';
-import { Vector } from 'ol/source';
+import { getRandomColorHex } from '../utils/get-random-color';
 
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css']
 })
-export class TestComponent implements OnInit {
+export class MainComponent implements OnInit {
   public location1: any;
   public head1: any;
   public location2: any;
@@ -70,11 +68,13 @@ export class TestComponent implements OnInit {
       const feature = new Feature({
         geometry: new Point(
           fromLonLat([
-            data[i].data.long,
-            data[i].data.lat
+            data[i].data.longitude,
+            data[i].data.latitude
           ])
         )
       });
+
+      console.log(getRandomColorHex(data[i].id));
 
       feature.setStyle(
         new Style({
@@ -82,7 +82,7 @@ export class TestComponent implements OnInit {
             src: 'assets/arrow.svg',
             size: [600, 600],
             scale: 0.1,
-            color: "#97E5F4"
+            color: getRandomColorHex(data[i].id)
           })
         })
       );
@@ -97,29 +97,49 @@ export class TestComponent implements OnInit {
       notification.classList.add('hidden');
     }
   }
-
-
-  iconVisible() {
-    for (let i = 0; i < this.vehicleList.length; i++) {
-      const elm = document.getElementById("check" + this.vehicleList[i]) as HTMLInputElement;
-      if (elm.checked === true) {
-        this.vectorSource.getFeatureById(this.vehicleList[i].id)!!.setStyle(
+  viewCheckbox(checkboxId: any, vehicleId: any) {
+    const checkbox = document.getElementById(checkboxId) as HTMLInputElement;
+    if (checkbox) {
+      if (checkbox.checked) {
+        this.vectorSource.getFeatureById(vehicleId)!!.setStyle(
           new Style({
             image: new Icon({
               src: 'assets/arrow.svg',
               size: [600, 600],
-              scale: 0.1
+              scale: 0.1,
+              color: getRandomColorHex(vehicleId)
             })
           })
         );
       } else {
-        this.vectorSource.getFeatureById(this.vehicleList[i].id)!!.setStyle(
+        this.vectorSource.getFeatureById(vehicleId)!!.setStyle(
           undefined
         );
-
       }
     }
   }
+
+  // iconVisible() {
+  //   for (let i = 0; i < this.vehicleList.length; i++) {
+  //     const elm = document.getElementById("check" + this.vehicleList[i]) as HTMLInputElement;
+  //     if (elm.checked === true) {
+  //       this.vectorSource.getFeatureById(this.vehicleList[i].id)!!.setStyle(
+  //         new Style({
+  //           image: new Icon({
+  //             src: 'assets/arrow.svg',
+  //             size: [600, 600],
+  //             scale: 0.1
+  //           })
+  //         })
+  //       );
+  //     } else {
+  //       this.vectorSource.getFeatureById(this.vehicleList[i].id)!!.setStyle(
+  //         undefined
+  //       );
+
+  //     }
+  //   }
+  // }
 
   deletevehc(id: any) {
     this.webSoc.emit("dellist", id);
@@ -175,6 +195,16 @@ export class TestComponent implements OnInit {
     }
   }
 
+  moveFocus(longitude: any, latitude:any) {
+    if (this.map) {
+      this.map.setView(new View({
+        center: fromLonLat([longitude, latitude]),
+        zoom: this.map.getView().getZoom(),
+        enableRotation: false
+      }));
+    }
+  }
+
   toggleTable() {
     const toggleBtn = document.querySelector('.burger-table');
     const sidebar = document.querySelector('.device-list');
@@ -207,7 +237,6 @@ export class TestComponent implements OnInit {
   });
 
   }
-
   zoomIn() {
     if (this.map) {
       const zoom = this.map.getView().getZoom()
@@ -222,14 +251,8 @@ export class TestComponent implements OnInit {
     }
   }
 
-  newZoom(lon: any, lat: any) {
-    if (this.map) {
-      this.map.setView(new View({
-        center: fromLonLat([lon, lat]),
-        zoom: this.map.getView().getZoom(),
-        enableRotation: false
-      }));
-    }
+  getRandomColorHex(num: any): string {
+    return getRandomColorHex(num);
   }
 }
 

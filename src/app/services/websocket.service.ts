@@ -16,8 +16,6 @@ export class WebsocketService {
   constructor() {}
 
   conn() {
-    // var ip = localStorage.getItem("ip")
-    // this.socket = io("http://"+ip)
     this.socket = io('http://localhost:3000')
     console.log('connected to server')
   }
