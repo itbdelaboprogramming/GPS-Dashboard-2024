@@ -16,6 +16,7 @@ import Zoom from 'ol/control/Zoom';
 import html2canvas from 'html2canvas';
 import { fromLonLat } from 'ol/proj';
 import { Geometry } from 'ol/geom';
+import { Vector } from 'ol/source';
 
 @Component({
   selector: 'app-main',
@@ -30,13 +31,8 @@ export class TestComponent implements OnInit {
   public map: Map | undefined;
   public roomlength = 5;
   public payload: any;
-  public newLength = 0;
-  public initLength = 0;
   public vehicleList: any[] = [];
-  public robotarrn: VectorLayer<FeatureLike>[] = [];
-  public payarr: any[] = [];
-  public paylod: any;
-
+  public vectorSource = new VectorSource();
   constructor(
     public webSoc: WebsocketService,
     public gpsDat: GpsdataService,
@@ -51,62 +47,78 @@ export class TestComponent implements OnInit {
 
     this.webSoc.listen("vehicle-list").subscribe((data: any) => {
       this.vehicleList = data;
-      this.newLength = this.vehicleList.length;
-
-      if (this.newLength !== this.initLength && this.initLength !== 0) {
-        this.refreshPage();
-      }
-    });
-
-    this.webSoc.listen("gps-then").subscribe((data: any) => {
-      this.updateGpsData(data);
+      this.updateMapFeature(data);
     });
   }
 
-  updateGpsData(data: any) {
-    this.paylod = data;
-    this.payarr[parseInt(this.paylod.id) - 1] = this.paylod.data;
-    const refFeature = new Feature({
-      geometry: new Point(
-        fromLonLat([
-          this.payarr[parseInt(this.paylod.id) - 1].longitude,
-          this.payarr[parseInt(this.paylod.id) - 1].latitude
-        ])
-      )
-    });
+  showNotification() {
+    const notification = document.querySelector('.toast-notification')!!;
+    if (notification) {
+      notification.classList.remove('hidden');
+    }
+    notification.innerHTML = '&#9432 The location displayed for the disconnected robot is the last location it was connected';
+  }
+  updateMapFeature(data: any) {
+    console.log("Updating map features");
+    console.log(data);
+    let foundDisconnected = false;
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].data.state == "Disconnected") {
+        foundDisconnected = true;
+      }
 
-    refFeature.setStyle(
-      new Style({
-        image: new Icon({
-          src: 'assets/arrow.svg',
-          size: [600, 600],
-          scale: 0.1
-          // color: this.iconColor(this.paylod.id)
+      const feature = new Feature({
+        geometry: new Point(
+          fromLonLat([
+            data[i].data.long,
+            data[i].data.lat
+          ])
+        )
+      });
+
+      feature.setStyle(
+        new Style({
+          image: new Icon({
+            src: 'assets/arrow.svg',
+            size: [600, 600],
+            scale: 0.1,
+            color: "#97E5F4"
+          })
         })
-      })
-    );
+      );
 
-    const refSource = new VectorSource<FeatureLike>({
-      features: [refFeature]
-    });
-
-    this.robotarrn[parseInt(this.paylod.id) - 1].setSource(refSource);
-  }
-
-  iconVisible() {
-    for (let i = 0; i < this.newLength; i++) {
-      const elm = document.getElementById("check" + this.vehicleList[i]) as HTMLInputElement;
-      if (elm.checked === true) {
-        this.robotarrn[i].setVisible(true);
-      } else {
-        this.robotarrn[i].setVisible(false);
-      }
+      feature.setId(data[i].id);
+      this.vectorSource.addFeature(feature);
+    }
+    if (foundDisconnected) {
+      this.showNotification();
+    } else {
+      const notification = document.querySelector('.toast-notification')!!;
+      notification.classList.add('hidden');
     }
   }
 
-  refreshPage() {
-    this.location.go(this.location.path());
-    window.location.reload();
+
+  iconVisible() {
+    for (let i = 0; i < this.vehicleList.length; i++) {
+      const elm = document.getElementById("check" + this.vehicleList[i]) as HTMLInputElement;
+      if (elm.checked === true) {
+        this.vectorSource.getFeatureById(this.vehicleList[i].id)!!.setStyle(
+          new Style({
+            image: new Icon({
+              src: 'assets/arrow.svg',
+              size: [600, 600],
+              scale: 0.1
+            })
+          })
+        );
+      } else {
+        this.vectorSource.getFeatureById(this.vehicleList[i].id)!!.setStyle(
+          undefined
+        );
+
+      }
+    }
   }
 
   deletevehc(id: any) {
@@ -163,33 +175,6 @@ export class TestComponent implements OnInit {
     }
   }
 
-  // tableColor(list: any) {
-  //   for (let i = 0; i < list.length; i++) {
-  //     const element = document.getElementById(list[i]);
-  //     if (element) {
-  //       element.style.backgroundColor = this.iconColor(i + 1);
-  //     }
-  //   }
-  // }
-
-  roomi(room: any) {
-    this.webSoc.emit("room", room);
-    this.webSoc.listen("location1").subscribe((data: any) => {
-      if (data.room === "robot1") {
-        this.location1 = data.data;
-      } else if (data.room === "robot2") {
-        this.location2 = data.data;
-      }
-    });
-    this.webSoc.listen("heading1").subscribe((data: any) => {
-      if (data.room === "robot1") {
-        this.head1 = data.data;
-      } else if (data.room === "robot2") {
-        this.head2 = data.data;
-      }
-    });
-  }
-
   toggleTable() {
     const toggleBtn = document.querySelector('.burger-table');
     const sidebar = document.querySelector('.device-list');
@@ -200,37 +185,23 @@ export class TestComponent implements OnInit {
     }
   }
 
-  newZoomSetColor(lon: any, lat: any, id: any) {
-    this.newZoom(lon, lat);
-    this.setColor(id);
-  }
-
-  setColor(id: any) {
-    for (let i = 0; i <= this.vehicleList.length; i++) {
-      const element = document.getElementById(i.toString());
-      if (element) {
-        if (i == id) {
-          element.style.background = "#e66e86";
-          element.style.opacity = "0.8";
-        } else {
-          element.style.background = "#97E5F4";          
-        }
-      }
-    }
-  }
-
   initMap() {
+    const vectorLayer = new VectorLayer({
+      source: this.vectorSource, 
+    });
+
     this.map = new Map({
     target: 'map',
     controls: [],
     layers: [
       new TileLayer({
         source: new OSM()
-      })
+      }),
+      vectorLayer
     ],
     view: new View({
-      center: fromLonLat([106.920671, -6.167175]),
-      zoom: 1,
+      center: fromLonLat([0, 0]),
+      zoom: 2,
       enableRotation: false
     })
   });
@@ -260,41 +231,5 @@ export class TestComponent implements OnInit {
       }));
     }
   }
-
-  // layerdev(length: any) {
-  //   const aslilength = length;
-  //   this.robotarrn = [];
-
-  //   for (let i = 0; i < aslilength; i++) {
-  //     const gpsFeature = new Feature({
-  //       geometry: new Point(fromLonLat([106.920671 - 0.0001 * Math.random(), -6.167175 - 0.0001 * Math.random()]))
-  //     });
-
-  //     gpsFeature.setStyle(new Style({
-  //       image: new Icon({
-  //         src: 'assets/arrow.svg',
-  //         size: [600, 600],
-  //         scale: 0.1,
-  //       })
-  //     }));
-
-  //     const gpsLayer = new VectorLayer<FeatureLike>({
-  //       source: new VectorSource<FeatureLike>({
-  //         features: [gpsFeature]
-  //       })
-  //     });
-
-  //     this.robotarrn.push(gpsLayer);
-  //   }
-  //   this.map.addControl(new Zoom({
-  //     className: 'zoom-control',
-  //     zoomInLabel: '+',
-  //     zoomOutLabel: '-'
-  //   }));
-
-  //   for (let i = 0; i < aslilength; i++) {
-  //     this.map.addLayer(this.robotarrn[i]);
-  //   }
-  // }
 }
 

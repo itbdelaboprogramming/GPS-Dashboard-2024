@@ -1,13 +1,7 @@
 <head>
-  <script
-    src="https://kit.fontawesome.com/c9d9a9c246.js"
-    crossorigin="anonymous"
-  ></script>
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.3.1/css/ol.css"
-    type="text/css"
-  />
+  <script src="https://kit.fontawesome.com/c9d9a9c246.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.3.1/css/ol.css"
+    type="text/css" />
   <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.3.1/build/ol.js"></script>
 
   <style>
@@ -21,9 +15,9 @@
 <body id="wholeapp">
   <app-header></app-header>
 
-  <div (click)="refreshPage()" class="burger-table" id="refresh-robot">
+  <!-- <div (click)="refreshPage()" class="burger-table" id="refresh-robot">
     <i class="fa fa-rotate-right"></i>
-  </div>
+  </div> -->
   <div (click)="toggleTable()" class="burger-table" id="toggle-table">
     <i class="fa-class-button fa fa-bars"></i>
   </div>
@@ -31,38 +25,50 @@
   <div class="device-list">
     <table>
       <tr>
-        <th><p>No.</p></th>
-        <th><p>Robot Name</p></th>
-        <th class="coordinate"><p>Latitude</p></th>
-        <th class="coordinate"><p>Longitude</p></th>
-        <th class="status"><p>Status</p></th>
-        <th class="view"><p>View</p></th>
+        <th>
+          <p>No.</p>
+        </th>
+        <th>
+          <p>Robot Name</p>
+        </th>
+        <th class="coordinate">
+          <p>Latitude</p>
+        </th>
+        <th class="coordinate">
+          <p>Longitude</p>
+        </th>
+        <th class="status">
+          <p>Status</p>
+        </th>
+        <th class="focus">
+          <p>Focus</p>
+        </th>
+        <th class="view">
+          <p>View</p>
+        </th>
       </tr>
 
-      <tr *ngFor="let vehc of vehicleList; let i = index" class="vehicle-item" id="{{ vehc }}" (click)="newZoomSetColor(payarr[i].longitude,payarr[i].latitude,vehc)">
+      <tr *ngFor="let vehc of vehicleList; let i = index" class="vehicle-item" id="vehicle-item-{{ i }}">
         <td>
-          <p>{{ i + 1 }}</p>  
+          <p>{{ i + 1 }}</p>
         </td>
         <td>
-          <p>{{ payarr[i].vehicleName }}</p>
+          <p>{{ vehicleList[i].data.vehicleName }}</p>
         </td>
         <td class="coordinate">
-          <p>{{ payarr[i].latitude }}</p>
+          <p>{{ vehicleList[i].data.latitude }}</p>
         </td>
         <td class="coordinate">
-          <p>{{ payarr[i].longitude }}</p>
+          <p>{{ vehicleList[i].data.longitude }}</p>
         </td>
         <td>
-          <p>{{ payarr[i].status }}</p>
+          <p>{{ vehicleList[i].data.state }}</p>
         </td>
         <td>
-          <input
-            class="view-checkbox"
-            (click)="iconVisible()"
-            type="checkbox"
-            id="check{{ vehc }}"
-            checked
-          />
+          <input class="focus" (click)="iconVisible()" id="check-{{ i }}" checked />
+        </td>
+        <td>
+          <input class="view-checkbox" (click)="iconVisible()" type="checkbox" id="check-{{ i }}" checked />
         </td>
       </tr>
     </table>
@@ -74,22 +80,14 @@
     </div>
     <div class="right-footer">
       <div class="footer-container">
-        <i
-        (click)="zoomIn()"
-        class="footer-button fa-class-button fa fa-search-plus"
-        ></i>
-        <i
-        (click)="zoomOut()"
-        class="footer-button fa-class-button fa fa-search-minus"
-        ></i>
-        <i
-          (click)="captureScreenshot()"
-          class="footer-button fa-class-button fas fa-camera"
-        ></i>
+        <i (click)="zoomIn()" class="footer-button fa-class-button fa fa-search-plus"></i>
+        <i (click)="zoomOut()" class="footer-button fa-class-button fa fa-search-minus"></i>
+        <i (click)="captureScreenshot()" class="footer-button fa-class-button fas fa-camera"></i>
       </div>
       <li>&#169; 2024 ITBdeLabo</li>
     </div>
   </div>
 
   <div class="map-layer" id="map"></div>
+  <div class="toast-notification hidden">Lorem Ipsum</div>
 </body>

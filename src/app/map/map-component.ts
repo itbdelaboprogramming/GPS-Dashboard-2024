@@ -117,6 +117,7 @@ export class MapComponent implements OnInit {
             src: 'assets/arrow.svg',
             size: [600, 600],
             scale: 100,
+            color: getRandomColorHex()
           })
         })
       );

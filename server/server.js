@@ -1,12 +1,10 @@
-// PACKAGE IMPORT
 const express = require("express")
 const cors = require("cors")
-
 const app = express()
 
 app.use(express.json())
 
-// CORS
+/* Setting Up CORS */
 app.use(cors())
 app.all("/", function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*")
@@ -14,16 +12,14 @@ app.all("/", function (req, res, next) {
   next()
 })
 
-// Open server on port 3000
+/* Running the server on port */
 const port = process.env.PORT || 3000
 const server = app.listen(port, () => {
   let ports = server.address().port
   console.log("App now running on port", ports)
 })
 
-var carlist = []
-var uniquelist = []
-// Setup Socket IO and CORS handler
+/* Setting up socket.io */
 const io = require("socket.io")(server, {
   cors: {
     origin: ["http://localhost:4200"],
@@ -33,52 +29,98 @@ const io = require("socket.io")(server, {
   },
 })
 
-// Make an event connection when client connected
-io.on("connection", (socket) => {
-  socket.emit("hello", "world")
+const MOVING_TIMEOUT = 5000
+const CONNECTION_TIMEOUT = 10000
 
-  // Listen to location data at "location" event from raspberry pi client
+var vehicleList = []
+var movingTimeouts = []
+var connectionTimeout = []
+io.on("connection", (socket) => {
   socket.on("gps", (data) => {
     payload = JSON.parse(data)
-    console.log("car id : " + payload.id)
-    carlist.push(payload.id)
-    carlist.sort()
-    console.log(payload)
-    uniquelist = carlist.filter((x, i, a) => a.indexOf(x) == i)
-    console.log(uniquelist)
-    // console.log(payload.id in carlist)
-    io.emit("vehicle-list", uniquelist)
-    // socket.room = payload.room
 
-    // Send received location data in "location-next" event in order to be received by angular app client
-    io.emit("gps-then", payload)
-  })
-  socket.on("dellist", (payload) => {
-    index = 0
-    for (i = 0; uniquelist.length; i++) {
-      if (uniquelist[i] == payload) {
-        index = i
+    let vehicleFound = false
+    /* Search for exising robot */
+    for (let i = 0; i < vehicleList.length; i++) {
+      if (vehicleList[i].id == payload.id) {
+        vehicleList[i].data.latitude = payload.data.latitude
+        vehicleList[i].data.longitude = payload.data.longitude
+        vehicleList[i].data.status = payload.data.status
+        vehicleList[i].data.vehicleName = payload.data.vehicleName
+        if (!(vehicleList[i].data.longitude == payload.data.longitude && vehicleList[i].data.latitude == payload.data.latitude)) {
+          resetMovingTimeout(payload.id)
+          vehicleList[i].data.state = "Working"
+        }
+        if (vehicleList[i].data.state == "Disconnected") {
+          vehicleList[i].data.state = "Working"
+        }
+        resetConnectionTimeout(payload.id)
+
+        vehicleFound = true
         break
       }
     }
-
-    carlist = carlist.filter(removeRoom)
-
-    function removeRoom(age) {
-      return age != payload
+    if (!vehicleFound) {
+      /* Assume every robot working when connected in the first time */
+      payload.data.state = "Working"
+      vehicleList.push(payload)
+      registerConnectionTimeout(payload.id)
+      registerMovingTimeout(payload.id)
     }
-    uniquelist.splice(index, 1)
-    console.log(uniquelist)
-    io.emit("vehicle-list", uniquelist)
-  })
-
-  // Listen to heading data at "heading" event from raspberry pi client
-  socket.on("heading", (data) => {
-    payload = JSON.parse(data)
-    console.log(payload)
-    socket.room = payload.room
-
-    // Send received heading data in "heading-next" event in order to be received by angular app client
-    io.in(payload.room).emit("heading1", payload)
   })
 })
+
+setInterval(()=>{
+  console.log("vehicle-list", vehicleList)
+  io.emit("vehicle-list", vehicleList)
+}, 3000);
+
+function setState(id, state) {
+  for (let i = 0; i < vehicleList.length; i++) {
+    if (vehicleList[i].id == id) {
+      vehicleList[i].data.state = state
+      break
+    }
+  }
+}
+
+function registerMovingTimeout(id) {
+  timeout = setTimeout(() => {
+    console.log("Timeout for ", id)
+    setState(id, "Idle")
+  }, MOVING_TIMEOUT)
+  movingTimeouts.push({ id: id, timeout: timeout })
+}
+
+function registerConnectionTimeout(id) {
+  timeout = setTimeout(() => {
+    setState(id, "Disconnected")
+  }, CONNECTION_TIMEOUT)
+  connectionTimeout.push({ id: id, timeout: timeout })
+}
+
+function resetMovingTimeout(id) {
+  console.log("Resetting moving timeout for ", id)
+  for (let i = 0; i < movingTimeouts.length; i++) {
+    if (movingTimeouts[i].id == id) {
+      clearTimeout(movingTimeouts[i].timeout)
+      movingTimeouts[i].timeout = setTimeout(() => {
+        setState(id, "Idle")
+      }, MOVING_TIMEOUT)
+      break
+    }
+  }
+}
+
+function resetConnectionTimeout(id) {
+  for (let i = 0; i < connectionTimeout.length; i++) {
+    if (connectionTimeout[i].id == id) {
+      clearTimeout(connectionTimeout[i].timeout)
+      connectionTimeout[i].timeout = setTimeout(() => {
+        setState(id, "Disconnected")
+      }, CONNECTION_TIMEOUT)
+      break
+    }
+  }
+}
+
