@@ -199,7 +199,7 @@ export class MainComponent implements OnInit {
     if (this.map) {
       this.map.setView(new View({
         center: fromLonLat([longitude, latitude]),
-        zoom: this.map.getView().getZoom(),
+        zoom: 20,
         enableRotation: false
       }));
     }

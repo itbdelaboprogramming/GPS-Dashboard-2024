@@ -31,6 +31,8 @@ const io = require("socket.io")(server, {
 
 const MOVING_TIMEOUT = 5000
 const CONNECTION_TIMEOUT = 10000
+const POLLING_INTERVAL = 1000
+
 const DISCONNECTED = "Disconnected"
 const IDLE = "Idle"
 const WORKING = "Working"
@@ -41,7 +43,6 @@ var connectionTimeout = []
 io.on("connection", (socket) => {
   socket.on("gps", (data) => {
     payload = JSON.parse(data)
-
     let vehicleFound = false
     /* Search for exising robot */
     for (let i = 0; i < vehicleList.length; i++) {
@@ -77,7 +78,7 @@ io.on("connection", (socket) => {
 setInterval(()=>{
   console.log("vehicle-list", vehicleList)
   io.emit("vehicle-list", vehicleList)
-}, 3000);
+}, POLLING_INTERVAL);
 
 function setState(id, state) {
   for (let i = 0; i < vehicleList.length; i++) {
