@@ -9,35 +9,21 @@ declare var WebSocket: any
 })
 export class WebsocketService {
   public socket: any
-  public webSocket: any
-  public gpsdata: any
-  public ipAdd: any
+  public gpsData: any
 
-  constructor() {}
-
-  conn() {
-    this.socket = io('http://localhost:3000')
-    console.log('connected to server')
+  constructor() {
+    this.socket = io('http://localhost:3000/consumer')
   }
 
-  // Function to listen to an event
-  listen(eventName: string) {
-    // this.socket = io("http://"+this.ipAdd)
-    this.socket.on('hello', (arg: any) => {
-      // console.log(arg); // world
-      // console.log(-6.5360378062373)
-    })
-
+  listen(eventName: string, namespace: string = '/consumer') {
     return new Observable((subscriber: any) => {
       this.socket.on(eventName, (data: any) => {
-        subscriber.next(data)
-        // console.log('test')
-      })
-    })
+        subscriber.next(data);
+      });
+    });
   }
 
-  // Function to send a message/data in specific event
-  emit(eventName: any, data: any) {
-    this.socket.emit(eventName, data)
+  emit(eventName: any, data: any, namespace: string = '/consumer') {
+    this.socket.emit(eventName, data, namespace);
   }
 }

@@ -29,10 +29,6 @@ th {
   border: 3px solid #0567a6;
 }
 
-td {
-  border: 3px solid #0567a6;
-  background-color: #D9FEFA;
-}
 
 .map-layer {
   z-index: 1;
@@ -53,17 +49,12 @@ th {
 
 td {
   text-align: center;
-  /* background: #e8f5f4; */
 }
 
 th {
   padding: 3px;
   width: 30px;
 }
-
-  /* tr:nth-child(even) {
-    background-color: #e8f5f4;
-  } */
 
 tr p,
 ::placeholder {
@@ -199,10 +190,6 @@ li {
   height: 70px;
 }
 
-.focus-icon {
-  width: 20px;
-  height: 20px;
-}
 
 .toast-notification {
   position: absolute;
